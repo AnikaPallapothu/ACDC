@@ -1,0 +1,66 @@
+FROM nvidia/cuda:12.0.0-devel-ubuntu20.04
+ENV DEBIAN_FRONTEND=noninteractive
+# Install dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    gcc \
+    g++ \
+    python3.9-dev \
+    python3-pip \
+    python3-setuptools \
+    python3-wheel \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python packages
+RUN python3.9 -m pip install numpy matplotlib
+RUN python3.9 -m pip install setuptools==45.2.0
+
+COPY ./torch-1.12.0+cu116-cp39-cp39-linux_x86_64.whl .
+RUN python3.9 -m pip install torch-1.12.0+cu116-cp39-cp39-linux_x86_64.whl
+RUN python3.9 -m pip install torchvision==0.13.0
+
+# install fastapi
+RUN python3.9 -m pip install fastapi[all] uwsgi httpx
+
+# install bson
+RUN python3.9 -m pip install bson
+
+# install pymongo
+RUN python3.9 -m pip install pymongo
+
+# install nibabel, scipy, redis, simpleitk
+RUN python3.9 -m pip install nibabel scipy redis SimpleITK pydicom
+
+# install albumentations, scikit-image
+RUN python3.9 -m pip install albumentations scikit-image pandas matplotlib pyyaml
+
+# install uvicorn
+RUN python3.9 -m pip install uvicorn
+
+# install vtk
+RUN apt-get -y update &&  apt-get install -y libgl1 libxrender-dev libglib2.0-0 libsm6 libxext6
+RUN python3.9 -m pip install vtk
+
+# install weasyprint
+RUN apt-get install -y pango-1.0-0 pangoft2-1.0-0
+RUN python3.9 -m pip install weasyprint
+
+RUN python3.9 -m pip install jinja2
+
+# install bcrypt  and jwt
+RUN python3.9 -m pip install bcrypt PyJWT
+
+# Set the default shell to bash instead of sh
+ENV SHELL /bin/bash
+
+RUN ln -s $(which python3.9) /usr/local/bin/python
+RUN ln -s $(which pip3) /usr/local/bin/pip
+
+COPY ./src /src
+
+WORKDIR /src
+
+
+
+    

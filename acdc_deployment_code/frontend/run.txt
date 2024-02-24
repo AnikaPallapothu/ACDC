@@ -1,0 +1,8 @@
+to run 
+npm start
+
+if any err_ossl
+
+export NODE_OPTIONS=--openssl-legacy-provider
+
+again run npm start
